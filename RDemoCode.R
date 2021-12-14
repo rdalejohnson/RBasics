@@ -1,15 +1,21 @@
-set.seed(42)
+# USEFUL OPTIONS and RULES #################
+#change default number of decimal places; 7 places if the default
+options(digits = 2)
 
-my_vec <- rnorm(10, mean = 400, sd = 10)
+# vector indices start at 1 (NOT ZERO)
 
-plot(my_vec,
-     type = "l", # "l" stands for line
-     main = "Plot title",
-     ylab = "Y-axis label",
-     xlab = "X-axis label"
-)
+# SYSTEM STUFF ###################
 
-# THE SIX BASIC DATA TYPES
+R.version
+getwd()
+
+
+# HELP ###########################
+?read.csv #input appears in the help tab, bottom right
+
+
+
+# THE SIX BASIC DATA TYPES #####################
   # Numeric
   # Integer
   # Complex
@@ -49,6 +55,7 @@ intvector <-   c(intvector, 99, 101, 301, "charlier")
 intvector
 
 #FACTORS ########################################
+#THESE ARE QUALITIES more than just data values like street address
 
 #use factors for character data with a limited number of discrete values
 gender <- factor(c("male", "female", "female", "female", "male", "male"))
@@ -66,7 +73,10 @@ jobTitleAsFactors <- as.factor(jobTitles)
 levels(jobTitleAsFactors)
 
 
-#LOGICAL ##########################################
+# LOGICAL ##########################################
+# REMEMBER: TRUE and FALSE must be uppercase to be logical
+# FALSE is equivalent to ZERO
+# TRUE is all other values
 
 logicals <- c(TRUE, TRUE, FALSE, TRUE, FALSE, FALSE, 3<5)
 logicalsAsInts  <- as.numeric(logicals)
@@ -76,4 +86,190 @@ logicalsAsInts
 intsAsLogical <- as.logical(logicalsAsInts)
 intsAsLogical
 
+logInts <- c(-1, 3, 0, 5, 0, 44)
+as.logical(logInts)
 
+
+
+# WORKING DIRECTORY #####################################
+
+setwd("D:/R Projects/RBasics")
+getwd()
+
+
+
+# IMPORTING DATA - CSV TEXT FILE ########################
+# REMEMBER: file names are case-sensitive
+dat <- read.csv(
+  file = "data.csv",
+  header = TRUE,
+  sep = ",",
+  dec = ".",  #indicates the decimal point in your language
+  stringsAsFactors = TRUE #FALSE by default starting with R 4.0.0
+)
+
+View(dat)
+head(dat) #first six rows
+
+
+###  https://statsandr.com/blog/data-manipulation-in-r/
+
+# VECTORS #####################################
+
+# concatenate a sequence:
+seq1 <- c(1:10)
+
+seq1 <- c(seq1, 1, 5 / 6, 2^3, -0.05)
+
+seq1
+
+#create vectors from more complex sequences than just 1:10
+seq(from = 2, to = 5)
+seq(from = 2, to = 5, by = 0.5)
+seq(from = 2, to = 5, length.out = 14) #this means you will get 14 values; the BY is computed for you.
+
+#create vectors as repetitions of specific values
+rep(1, times=3)
+
+#The first vector are the values, the second vector are how many times to repeat each
+rep(c("A", "B", "C"), times = c(3, 1, 2))
+
+#mixing strings and numbers; if any strings are in a vector, the vector is ALL string
+x <- rep(c("A", 2, "C", 8, "HARLEY", 155, "zero" ), times = c(3, 1, 2, 7, 6, 2, 2))
+
+#selecting specific values in a vector
+x[3]
+#selecting multiple vector values
+x[c(1,3,5, 8, 2)]
+
+x
+
+x[c(FALSE, TRUE, TRUE, FALSE, TRUE, FALSE, TRUE, TRUE, FALSE)]
+
+# removing elements; here, removing elements 2 and 12-17
+x[-c(4,seq(from=14, to=19))]
+
+#type of the vector:
+class(x)
+is.numeric(x) #returns TRUE or FALSE
+is.logical(x)
+is.character(x)
+is(x)
+
+#length of vector
+length(x)
+
+#select the very last element of a vector
+x[length(x)]
+
+################changing a vector's type or length
+as.character(seq1)
+as.logical(seq1)
+
+#!!!!!!!!!!!!! you can actually 
+#truncate the vector by shortening the length
+seq1 <- c(1:10)
+seq1 <- c(seq1, 1, 5 / 6, 2^3, -0.05)
+
+length(seq1) <- 3
+seq1
+
+#vector numerical operations - combining vectors mathematically
+#MUST BE same length
+
+seq1 <- c(1:10)
+seq2 <- c(21:30)
+
+seq1+seq2
+seq1*seq2
+seq1-seq2
+seq1^seq2
+
+#vector functions
+max(seq1)
+min(seq2)
+sum(seq1)
+prod(seq1)
+cumsum(seq1)
+cumprod(seq1)
+seq1*-1
+abs(seq1*-1)
+#also sqrt, cos, sin, tan, log, log10, exp, abs
+
+# can ROUND, FLOOR, CEILING all elements at once
+exp(seq1)
+round(exp(seq1))
+floor(exp(seq1))
+ceiling(exp(seq1))
+
+
+# LOGICAL OPERATOR ##############################
+# relational: <, >, >=, <=, ==, !=
+# OR: |
+# And: &
+# Negation: !
+
+# operations using logical operators applied to entire 
+#vector in one expression
+!(as.logical(seq1))
+(seq1==1|seq1==10)
+
+# ALL and ANY applied to vectors
+# do any/all elements of the vector meet the condition?
+
+seq1 <= 1  #applies test to every element
+
+all(seq1 <= 1)
+any(seq1 <= 1)
+
+
+#########character vector operations
+
+#PASTE with separator
+code <- paste(c("BE", "BE", "FR", "EN", "BE"), 1:5, sep = "/")
+code
+
+code2 <- paste(c("BE", "BE", "FR", "EN", "BE"), 1:5,  sep = "")
+code2
+
+#position of elements containing a given string
+grep("FR", code2)
+
+#substr applied to entire vector; here, first 3 characters every element
+substr(code2, start=1, stop=3)
+
+#substitute/replace characters in a vector of strings
+#every element
+sub(pattern="BE", replacement="XX", code2)
+
+#SPLIT
+cities = c("gadsden, AL", "birmingham, AL", "atlanta, GA", "richmond, VA")
+cities
+splitup <- strsplit(cities, split=", ")
+
+splitup
+
+#UPPER and LOWER
+toupper(cities)
+tolower(cities)
+
+
+# SORTING/RANKING VECTORS ################
+
+sort(cities)
+sort(seq1)
+sort(seq1, decreasing=TRUE)
+
+#ORDER gives you the element indices for the sorted vector
+#from smallest/lowest to largest
+order(cities)
+
+order(cities, decreasing=TRUE)
+
+testseq <- c(1.5, 1.5, 3, 2, 5, 17, -3, 1.5, 2)
+testseq
+order(testseq)
+rank(testseq)
+
+
+############### FACTORS ##############
