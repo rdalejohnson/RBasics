@@ -54,24 +54,72 @@ intvector <-   c(intvector, 99, 101, 301, "charlier")
 
 intvector
 
-#FACTORS ########################################
+####################FACTORS ########################################
 #THESE ARE QUALITIES more than just data values like street address
+#A vector with a list of levels/categories.
+#Qualitative: eye color, gender, marital status
 
 #use factors for character data with a limited number of discrete values
 gender <- factor(c("male", "female", "female", "female", "male", "male"))
 
+
 #levels returns the distinct values in a vector of factors
+levels(gender)
+
+#gets the number of levels
+nlevels(gender)
+
+#reference level is  always the first level.  To change that: RELEVEL
+levels(gender)
+gender <- relevel(gender, ref="male")
 levels(gender)
 
 class(gender)
 
-#convert a vector of character strings to a factor vector
+#Example 1 of: convert a vector of character strings to a factor vector
 
 jobTitles <- c("manager", "front-line worker", "manager", "manager", "driver", "driver", "front-line worker")
 jobTitleAsFactors <- as.factor(jobTitles)
 
 levels(jobTitleAsFactors)
 
+#Example 2 of: convert a vector of discrete values into a factor
+v <- c(1, 1, 0, 1, 0)
+
+v2 <- factor(
+        v,
+        levels = c(0, 1),
+        labels = c("bad", "good")  #ordering of levels and labels is important
+)
+
+v2
+
+#Ways to get frequencies of each level in a vector
+table(v2)
+summary(v2)
+
+#ways to get proportions for each level in a vector
+prop.table(table(v2))
+prop.table(summary(v2))
+
+
+#convert factors (which are actually numeric under the hood) 
+#into their numerical equivalent :
+v3 <- as.numeric(v2)
+
+# and can convert numeric vectors into factors different ways
+as.factor(v3)
+factor(v3)
+
+#FACTOR function lets you supply labels at the same time
+num <- 1:5
+num
+numAsFactor <- factor(
+                num,
+                labels = c("bad", "poor", "neutral", "good", "very good")
+               )
+
+numAsFactor
 
 # LOGICAL ##########################################
 # REMEMBER: TRUE and FALSE must be uppercase to be logical
@@ -269,7 +317,9 @@ order(cities, decreasing=TRUE)
 testseq <- c(1.5, 1.5, 3, 2, 5, 17, -3, 1.5, 2)
 testseq
 order(testseq)
+
+#Each items's rank from smallest to largest, so the one
+#ranked as 1 is the smallest and ties all have same rank.
 rank(testseq)
 
-
-############### FACTORS ##############
+################# LISTS ############################
