@@ -4,6 +4,10 @@ options(digits = 2)
 
 # vector indices start at 1 (NOT ZERO)
 
+#Getting details on every possible object
+attributes(x)
+str(x)
+
 # SYSTEM STUFF ###################
 
 R.version
@@ -323,3 +327,59 @@ order(testseq)
 rank(testseq)
 
 ################# LISTS ############################
+# A list is a VECTOR of objects of any and all types
+
+#Create a list of 3 objects, all of which are vectors
+tahiti <- list(
+  plane = c("Airbus", "Boeing"),
+  departure = c("Brussels", "Milan", "Paris"),
+  duration = c(15, 11, 14)
+)
+
+tahiti
+
+#Element extraction:
+
+tahiti$departure
+tahiti$de   #wtf? this works
+tahiti[[2]]
+tahiti[["departure"]]
+
+#drilling into specific elements:
+tahiti[2][1] #really not the right way 
+tahiti[[2]][1] #right way
+
+
+#transform a list into a vector:
+vec <- unlist(tahiti)
+vec
+
+randovec <- list(
+  plane = c("Airbus", "Boeing"),
+  departure = c("Brussels", "Milan", "Paris"),
+  duration = c(15, 11, 14),
+  aNumber = 3,
+  aPrez = "abraham lincoln"
+)
+randovec
+
+randovec$plane[2]
+randovec[[1]][2]
+randovec[3]
+randovec[[3]]
+as.character(randovec[4])
+
+attributes(randovec)
+str(randovec)
+
+attributes(randovec$aPrez)
+attributes(randovec$departure)
+str(randovec$aPrez)
+
+#################ATTRIBUTES###########################
+# https://statisticaloddsandends.wordpress.com/2020/10/19/attributes-in-r/
+
+
+
+################# DATA FRAMES #########################
+
