@@ -8,6 +8,11 @@ options(digits = 2)
 attributes(x)
 str(x)
 
+##################### DOWNLOADING PACKAGES ##########################
+
+install.packages("dplyr")
+library(dplyr)
+
 # SYSTEM STUFF ###################
 
 R.version
@@ -19,7 +24,7 @@ getwd()
 
 
 
-# THE SIX BASIC DATA TYPES #####################
+# THE SIX BASIC DATA TYPES/CLASSES #####################
   # Numeric
   # Integer
   # Complex
@@ -382,4 +387,68 @@ str(randovec$aPrez)
 
 
 ################# DATA FRAMES #########################
+#Columns can be from different classes
+#Columns = variables
+#Rows = observations
+#Cells = one value
 
+dat <- cars
+dat
+
+#get matrix size
+ncol(dat)
+nrow(dat)
+dim(dat)
+
+#names of lines and columns
+dimnames(dat)
+
+#column names only
+names(dat) 
+colnames(dat) 
+
+#rownames only
+rownames(dat)
+
+
+# SUBSETTING DATAFRAMES
+head(dat, n=12)
+tail(dat, n=15)
+
+library(dplyr)
+#random sample of rows
+sample_n(dat, 4, replace=FALSE)
+
+###################### subsetting by rows,columns ####################
+
+dat[3, ] #row 3
+dat[, 2] #col 2
+dat[3, 2] #single cell row 3 col 2
+dat[c(1:5, 10, 18), ] #only rows 1-5, 10, and 18
+dat[-c(5:32), ] #all rows EXCEPT 5-32
+dat[nrow(dat), ] # only the very last row
+
+#by column name - 3 equivalent ways
+dat$speed
+select(dat, speed) #dplyr
+select(dat, -dist) #dplyr
+
+#query-like subsetting
+subset(dat, dat$speed > 20)  #base R subset(dataframe, criteria)
+subset(dat, dat$dist <= 50 & dat$speed == 10)  #AND
+subset(dat, dat$dist <= 50 | dat$speed == 10)  #OR
+subset(dat, dat$dist != 50 & dat$speed != 10)  #not equal
+
+#split by factor into one list per factor level
+split(dat, dat$factor_variable)  #need to add example
+
+#Creating a new variable: adding more values to a dataframe
+
+#numeric
+dat$speed_dist <- dat$speed * dat$dist
+dat
+#factor
+dat$speed_cat <- factor(ifelse(dat$speed > 7, "high speed", "low speed"))
+dat
+
+#transform continuous into categorical
