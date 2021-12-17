@@ -11,6 +11,7 @@ str(x)
 ##################### DOWNLOADING PACKAGES ##########################
 
 install.packages("dplyr")
+install.packages("ggplot2")
 library(dplyr)
 
 # SYSTEM STUFF ###################
@@ -451,4 +452,118 @@ dat
 dat$speed_cat <- factor(ifelse(dat$speed > 7, "high speed", "low speed"))
 dat
 
-#transform continuous into categorical
+#####transform continuous into categorical
+#breaking speed into open-on-right ranges 0-12, 12-15, 15-19, 19-26+
+
+dat$speed_qualitative <- 
+    cut(dat$speed,
+        breaks = c(0,12,15,19,26), #cutoffs for each range
+        right=FALSE       #open on the right
+        )
+dat
+
+#ROW means/sums
+#completely non-sensical example here:
+dat$mean_score  <- rowMeans(dat[, 1:3]) #use cols 1-3 in calculation
+dat$total_score <- rowSums(dat[, 1:3])  #use cols 1-3 in calculation
+
+dat
+colnames(dat)
+
+#COLUMN means/sums - two ways, colMeans/colsSums handles many cols at once
+colMeans(dat[, 1:3])
+mean(dat$speed)
+
+colSums(dat[, 1:3])
+sum(dat$speed)
+
+
+#CATEGORICAL VARIABLES and label management
+
+#create a numeric category based on values/range:
+dat$dist_cat <- ifelse(dat$dist < 15, 1, 2)
+dat
+
+# change from numeric category to FACTOR and specify the labels
+# also replaces the numeric dist_cat column just created
+dat$dist_cat <- factor(dat$dist_cat,
+                       levels = c(1, 2),
+                       labels = c("small distance", "big distance") # follow the order of the levels
+)
+
+
+head(dat)
+class(dat$dist_cat)
+
+#Alternative way to factorize many variables in one command:
+dat <- within(dat, {
+  speed_cat <- factor(speed_cat, labels = c(
+    "high speed",
+    "low speed"
+  ))
+  dist_cat <- factor(dist_cat, labels = c(
+    "small distance",
+    "big distance"
+  ))
+})
+
+#another way to factorize multiple at once:
+library(ggplot2)
+
+mpg <- transform(mpg,
+                 cyl = factor(cyl),
+                 drv = factor(drv),
+                 fl = factor(fl),
+                 class = factor(class)
+)
+
+class(mpg$cyl)
+
+
+########## relabeling categoricals
+head(dat$dist_cat)
+dat$dist_cat <- recode(dat$dist_cat,
+                       "small distance" = "short distance",
+                       "big distance" = "large distance"
+)
+head(dat$dist_cat)
+
+#################### CHANGING REFERENCE LEVELS OF CATEGORICALS
+# R default is levels are ordered alphabetically 
+#    or by numeric value when a numeric is transformed into a factor
+
+#get current ordering of levels:
+levels(dat$dist_cat)  #first one listed is the reference level
+
+#change the reference level:
+dat$dist_cat <- relevel(dat$dist_cat, ref="large distance")
+levels(dat$dist_cat)
+
+
+############# renaming columns/variables in a dataframe #######
+
+dat <- rename(dat,           #dplyr
+              distance = dist,
+              speed_distance = speed_dist,
+              distance_cat = dist_cat
+)
+
+names(dat)
+head(dat)
+
+
+############### COMPOSING A DATAFRAME MANUALLY ################
+# if any of these concats have less than 4 values, R cycles through
+# the values for each row BUT you each must be a factor of 4, so
+# the catnames concat has to have 1, 2, or 4 values;  Cannot have 3
+# numeric columns will NOT repeat and different # of values results in
+# error
+
+dat <- data.frame(
+  "variable1" = c(6, 12, NA, 3), # presence of 1 missing value (NA)
+  "variable2" = c(3, 7, 9, 1),
+  "catnames" = c("molly", "jolly", "holly", "dolly")
+)
+
+
+################### MERGING DATAFRAMES ###############################
