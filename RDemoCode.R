@@ -567,3 +567,70 @@ dat <- data.frame(
 
 
 ################### MERGING DATAFRAMES ###############################
+
+#typically data frames are merged using common columns
+#but you can specify the merge column names
+
+dat1 <- data.frame(
+    person = c(1:4),
+    treatment = c("T1", "T2")
+)
+
+dat2 <- data.frame(
+  patient = c(1:4),
+  age = c(56, 23,  19, 44),
+  gender = c("M", "F", "F", "M")
+)
+
+datx <- data.frame(
+  person  = c(1:4),
+  dogname = c("poochie", "fido", "charles", "rex")
+)
+
+#merge on the person/patient columns
+
+mdat <- merge (
+  x=dat1, y=dat2,
+  by.x = "person", by.y = "patient",
+  all=TRUE
+)
+
+mdat
+
+#adding rows/observation from a third data frame using RBIND
+
+dat3 <- data.frame(
+  person = 5:8,
+  treatment = c("T3")
+)
+
+dat3
+
+#binds rows from dat3 into dat1, at the end of dat1
+rbind(dat1, dat3)
+
+#RBIND WILL FAIL if the column names are not the same
+#RBIND WILL FAIL if the number of columns is not the same
+rbind(dat1, datx)
+rbind(dat1, dat2)
+
+
+#adding columns/variables from one dataframe to another
+
+cbind(dat2, dat3) #adds all the columns alongside, no join condition
+datmess <- cbind(dat1, datx$dogname) #adds a single column alongside
+
+datmess
+
+
+library(dplyr)
+#dplyr - have to use quotes if the old column name looks like a selection
+#PATTERN IS NEW NAME = OLD NAME
+datmess <- rename(datmess,  
+              #NEW NAME = OLD NAME
+              pet_name = "datx$dogname" ,
+              pet_parent = person,
+              "Which Med?" = treatment)
+
+datmess
+
