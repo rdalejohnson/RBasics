@@ -3,6 +3,7 @@
 options(digits = 2)
 
 # vector indices start at 1 (NOT ZERO)
+# NA is missing, "NA" is a string
 
 #Getting details on every possible object
 attributes(x)
@@ -12,6 +13,9 @@ str(x)
 
 install.packages("dplyr")
 install.packages("ggplot2")
+install.packages("imputeMissings")
+install.packages("openxlsx")
+
 library(dplyr)
 
 # SYSTEM STUFF ###################
@@ -147,7 +151,22 @@ intsAsLogical
 logInts <- c(-1, 3, 0, 5, 0, 44)
 as.logical(logInts)
 
+# DATES and TIMES ################################################
+#default date format is ISO8601: 2001-02-13 (yyyy-mm-dd)
+as.Date("01/10/16", "%d/%m/%y")
 
+dates <- c("02/27/92", "02/27/99", "01/14/92")
+times <- c("23:03:20", "22:29:56", "01:03:30")
+x <- paste(dates, times)
+y <- strptime(x, format= "%m/%d/%y %H:%M:%S")
+y
+
+#extracting weekdays, months, quarter, and years from date
+weekdays(y, abbreviate = FALSE)
+months(y, abbreviate = FALSE)
+quarters(y, abbreviate = FALSE)
+format(y, "%Y") #4-digit years
+format(y, "%y") #2-digit years
 
 # WORKING DIRECTORY #####################################
 
@@ -633,4 +652,75 @@ datmess <- rename(datmess,
               "Which Med?" = treatment)
 
 datmess
+
+
+#another way to add a column from another frame AND rename in one step
+
+data.frame(datmess,
+           treatment = dat2$gender
+)
+
+
+########################### MISSING VALUES ###################################
+
+#represented as NA
+#often when an NA enters into a calculation, an NA is also the result of the calculation
+
+dat <- data.frame(
+  "variable1" = c(6, 12, NA, 3), # presence of 1 missing value (NA)
+  "variable2" = c(3, 7, 9, 1),
+  "catnames" = c("molly", "jolly", "holly", "dolly")
+)
+
+mean(dat$variable2)
+mean(dat$variable1)  #result is NA due to NA in variable1
+
+#can use na.omit() function
+mean(na.omit(dat$variable1)) # reduces the number of values to 3, so mean use 3 denominator
+#6+12+3 = 21/3 = 7
+
+#is.na looks at all elements in the frame and returns TRUE/FALSE
+#covers all rows, all cols
+is.na(dat)
+
+#anyNA returns a single TRUE/FALSE to indicate if an NA is found anywhere
+anyNA(dat)
+anyNA(dat$variable1)
+
+
+#COMPLETE CASES
+complete.cases(dat) #one test per row - is the row NA-free?
+
+#removing the incomplete cases/rows
+dat[complete.cases(dat), ]
+
+#IMPUTE MISSINGS with
+library(imputeMissings)
+
+dat
+imputedVersion <- impute(dat) #will use the median (for numeric) and mode (for factors/chars) by default
+imputedVersion <- imputedVersion[, 1:2]
+imputedVersion
+
+###################### SCALING/STANDARDIZING ###############################
+# will involve computing the mean/standard deviation
+# then each value of the scaled variable is scaled by subtracting the mean
+# and dividing by the standard deviation
+# z = (one_x_value - mean_of_x_variable)/stddev_of_x_variable
+
+scaledVersion <- scale(imputedVersion)
+
+imputedVersion
+scaledVersion
+
+################ writing objects to files ##################################
+
+save(imputedVersion, file="d:\\trashtest.Rdata")  #saves object in R format
+
+#as text file
+write.table(imputedVersion, file="d:\\trashtest.txt", row=FALSE, sep=",", quote=FALSE)
+
+#as csv file
+write.csv(imputedVersion, file="d:\\trashtest.csv", row.names=FALSE, quote=TRUE)
+
 
