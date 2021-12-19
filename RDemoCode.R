@@ -15,6 +15,7 @@ install.packages("dplyr")
 install.packages("ggplot2")
 install.packages("imputeMissings")
 install.packages("openxlsx")
+install.packages("pastecs")
 
 library(dplyr)
 
@@ -724,3 +725,83 @@ write.table(imputedVersion, file="d:\\trashtest.txt", row=FALSE, sep=",", quote=
 write.csv(imputedVersion, file="d:\\trashtest.csv", row.names=FALSE, quote=TRUE)
 
 
+
+############################ DESCRIPTIVE STATISTICS ###################
+############################ DESCRIPTIVE STATISTICS ###################
+############################ DESCRIPTIVE STATISTICS ###################
+############################ DESCRIPTIVE STATISTICS ###################
+
+#summarize, describe, present
+#Measures of location  - central tendency
+#Measures of dispersion - spread
+
+dat <- iris
+
+head (dat)
+
+str(dat)
+
+#min and max and range
+
+min(dat$Sepal.Length)
+max(dat$Sepal.Length)
+rng <- range(dat$Sepal.Length) # an object with the min and max
+rng
+minval <- rng[1]
+maxval <- rng[2]
+
+minval
+maxval
+
+rangeval <- maxval - minval
+
+rangeval
+
+#mean, median
+
+mean(dat$Sepal.Length, na.rm = TRUE)
+
+median(dat$Sepal.Length)
+quantile(dat$Sepal.Length, 0.5)
+
+#first and third quartiles, IQR
+
+quantile(dat$Sepal.Length, 0.25)
+
+quantile(dat$Sepal.Length, 0.75)
+
+IQR(dat$Sepal.Length)
+
+#standard deviation and variance
+
+sd(dat$Sepal.Length)
+var(dat$Sepal.Length)
+(sd(dat$Sepal.Length))^2
+
+#apply the same function to a number of variables at the same time:
+lapply(dat[, 1:4], sd)
+lapply
+
+#summary function - min, max, 1 and 3 quartiles, median, mean
+summary(dat)
+
+#grouped summaries
+#data frame, what to group by, what function to apply
+by (dat, dat$Species, summary)
+
+#pastecs package computes a lot of statistics for a dataframe
+library(pastecs)
+
+stat.desc(dat)
+
+#get skew, kurtosis, and normality test with norm=TRUE
+#gets standard error of tghe mean, 95% ci for mean,
+#coefficient of variation (the standard deviation divided by the mean)
+stat.desc(dat, norm = TRUE)
+
+coeff.of.variation <- sd(dat$Sepal.Length)/mean(dat$Sepal.Length)
+
+coeff.of.variation
+
+
+#MODE
