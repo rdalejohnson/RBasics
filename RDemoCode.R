@@ -805,3 +805,31 @@ coeff.of.variation
 
 
 #MODE
+#no specific function for MODE in r, so write your own:
+table(dat$Sepal.Length) # TABLE makes a frequency distribution
+
+sort(table(dat$Sepal.Length), decreasing=TRUE)
+
+
+#CONTINGENCY TABLE - TWO ways
+# categorical data
+#two discrete variables, combinations of all values, with counts
+
+#converting sepal length to qualitative/categorical
+#add as a NEW column to dat dataframe
+dat$size <- ifelse(dat$Sepal.Length < median(dat$Sepal.Length), "small", "big")
+
+table(dat$size) # just frequencies of the two size values just created
+
+#frequencies of the value combinations of the two categoricals
+#cases
+table(dat$Species, dat$size)
+xtabs(~ dat$Species + dat$size) #can switch order to switch rows/cols
+
+#relative frequencies - add up all cells to see 100%
+prop.table(table(dat$Species, dat$size))
+
+#percentages by row (1)
+prop.table(table(dat$Species, dat$size), margin = 1)
+#percentages by column(2)
+prop.table(table(dat$Species, dat$size), margin = 2)
