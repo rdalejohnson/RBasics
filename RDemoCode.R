@@ -16,6 +16,7 @@ install.packages("ggplot2")
 install.packages("imputeMissings")
 install.packages("openxlsx")
 install.packages("pastecs")
+install.packages("summarytools")
 
 library(dplyr)
 
@@ -833,3 +834,9 @@ prop.table(table(dat$Species, dat$size))
 prop.table(table(dat$Species, dat$size), margin = 1)
 #percentages by column(2)
 prop.table(table(dat$Species, dat$size), margin = 2)
+
+
+################### PACKAGE SUMMARYTOOLS ##############
+library(summarytools)
+
+freq(dat$Species)

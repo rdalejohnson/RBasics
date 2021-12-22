@@ -1,4 +1,5 @@
-install.packages("vcd")
+# install.packages("vcd")
+# install.packages("car")
 
 # PLOTTING/GRAPHING
 
@@ -125,3 +126,38 @@ plot(dat$Sepal.Length,
 qqnorm(dat$Sepal.Length)
 # Draw the reference line:
 qqline(dat$Sepal.Length)
+
+library(carData)
+library(car)
+
+qqPlot(dat$Sepal.Length)
+#need car/carData to get the confidence bands into
+#the qqplot
+#if points are close to the reference line and within
+#the confidence bands, the normality assumption
+#is met.
+#The sepal.length variable is not normally distributed
+#since points lie outside the bands.
+
+# QQ plots for normality in groups
+# gives two plots, one for  big and one for small
+qqPlot(dat$Sepal.Length, groups = dat$size)
+
+library(ggplot2)
+#both on a single plot
+qplot(
+  sample = Sepal.Length, data = dat,
+  col = size, shape = size
+)
+
+#############density plot #########
+#like a smooth histogram, represents the distribution of a numeric variable
+#functions PLOT and DENSITY are used together
+
+density(dat$Sepal.Length)
+
+plot(density(dat$Sepal.Length))
+
+ggplot(dat) +
+  aes(x = Sepal.Length) +
+  geom_density()
