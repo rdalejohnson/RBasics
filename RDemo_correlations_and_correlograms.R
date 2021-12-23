@@ -1,4 +1,6 @@
-#Correlation
+#Correlation and Covariance
+
+#Marin Stats: https://www.youtube.com/watch?v=XaNKst8ODEQ
 
 #https://statsandr.com/blog/correlation-coefficient-and-correlation-test-in-r/
 
@@ -22,11 +24,16 @@ dat <- mtcars[, c(1, 3:7)]  #could also remove the vs and am categoricals
 
 #cor function - correlation between 2 variables
 #Pearson:  the default; for quantitative continuous variables with linear relationship
+#          Pearson's is a parametric measure of the linear assoc. between 2 numeric vars
 #Spearman: uses ranks instead of raw data, often used to evaluate
 #          relationships with at least one qualitative ordinal or
 #          two quantitatives if their link is partially linear.
+#          Spearman's rank correlation is NON-parametric measure of the monotonic
+#          association between 2 numeric variables
 #Kendall's tau-b: computed from number of concordant pairs, often used for
 #          qualitative ordinals
+#          Kendall's is a non-parametric of association based on concordance/discordance
+#          of x-y pairs.
 
 cor(dat$hp, dat$mpg, method="pearson")
 
@@ -221,3 +228,44 @@ help(mtcars)
 library(GGally)
 
 ggpairs(dat[, c("mpg", "hp", "wt")])
+
+
+################################## MORE EXAMPLES #################################
+#https://www.youtube.com/watch?v=XaNKst8ODEQ
+
+LungCapData  <- read.csv(
+  file = "LungCapData.txt",
+  header = TRUE,
+  sep = "\t",
+  dec = ".",  #indicates the decimal point in your language
+  stringsAsFactors = TRUE #FALSE by default starting with R 4.0.0
+)
+
+attach(LungCapData)
+
+head(LungCapData)
+summary(LungCapData)
+names(LungCapData)
+
+
+plot(Age, LungCap, main="Scatterplot", las=1)
+#plot shows a positive assoc. between age and
+#lung capacity
+
+cor(Age, LungCap, method="pearson") #default is pearson
+
+#gives you the correlation, confidence interval, hypothesis test p value
+cor.test(Age, LungCap, method="pearson")
+
+cor.test(Age, LungCap, method="spearman")
+#You get a warning due to Age having some ties in the data
+#So, you can use Exact=False to tell r you only want to 
+#approximate p-values
+
+cor.test(Age, LungCap, method="spearman", exact = FALSE)
+
+#covariance
+cov(Age, LungCap)
+
+
+https://www.youtube.com/watch?v=4EXNedimDMs
