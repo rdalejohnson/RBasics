@@ -1,21 +1,79 @@
-########### correlation/correlogram #####################
-#install.packages("corrplot")
+#Correlation
+
+#https://statsandr.com/blog/correlation-coefficient-and-correlation-test-in-r/
+
 #https://statsandr.com/blog/correlogram-in-r-how-to-highlight-the-most-correlated-variables-in-a-dataset/
 
-#correlation: relationship between two variables, are they associated?
+#correlation: a measure of the relationship between two variables, are they associated?
 #done two variables at a time
+#quantitative variables, qualitative ordinal variables
+#chi-square is for qualitative nominal variables
 
 #This is linear correlation
 #negative correlation: the variables vary in opposite directions
 #positive correlation: the variables vary in the same direction
-#correlation values range from -1 to 1 with strong correlations
-#being those closer to -1 or 1.
+#correlation values range from -1 to 1 
+#strong correlations are those closer to -1 or 1.
+#a correlation of zero means the variables are independent.
+#correlation between X and Y is equal to the correlation between Y and X -
+#ORDER DOES NOT MATTER
 
-#correlation matrix for continuous variables, rounded to 2 places
-dat <- mtcars[, c(1, 3:7)]
+dat <- mtcars[, c(1, 3:7)]  #could also remove the vs and am categoricals
+
+#cor function - correlation between 2 variables
+#Pearson:  the default; for quantitative continuous variables with linear relationship
+#Spearman: uses ranks instead of raw data, often used to evaluate
+#          relationships with at least one qualitative ordinal or
+#          two quantitatives if their link is partially linear.
+#Kendall's tau-b: computed from number of concordant pairs, often used for
+#          qualitative ordinals
+
+cor(dat$hp, dat$mpg, method="pearson")
+
+
+#correlation matrix for all possible pairs of variables, rounded to 2 places
+
 round(cor(dat), 2)
 
+#The correlation should be plotted to see if outliers might bias the result.
+#Pearson can change drastically with a single point.
+#Correlation coefficient will also miss a non-linear relationship - so PLOT.
+
+plot(dat$hp, dat$mpg)
+
+library(ggplot2)
+
+ggplot(dat) +
+  aes(x = hp, y = mpg) +
+  geom_point(colour = "#0c4c8a") +
+  theme_minimal()
+
+
+#PAIRS function - lets you visualize all pairs of variables in a list
+
+pairs(dat[, c("mpg", "hp", "wt")])
+
+#correlation matrix
+
+library(corrplot)
+
+corrplot(cor(dat), method="number", type="upper") #show only upper side
+
+
+#correlation TEST - are the results statistically significant?
+
+
+
+
+
+
+
+
+
+
 #Convert the correlation matrix into a correlation plot/correlogram/corrgram
+
+#install.packages("corrplot")
 
 #below, a function corrplot2 is created  to make this process all-in-one easier
 # data is the name of the dataset
