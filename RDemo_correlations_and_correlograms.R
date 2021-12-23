@@ -61,14 +61,53 @@ corrplot(cor(dat), method="number", type="upper") #show only upper side
 
 
 #correlation TEST - are the results statistically significant?
+#a correlation coefficient that is not zero for a sample does not mean
+#the correlation is significantly different from zero in the population.
+#The correlation is rho.
+#hypotheses are:
+# Null: sample does not contain enough evidence that thee correlation coefficient
+#       does not equal zero;
+# Alternative:  sample contains enough evidence that the correlation coefficient
+#       does not equal zero;
 
+#ASSUMPTIONS for this test to be valid:
+#1. independence of the data
+#2. for a small sample (n < 30), the two variables should follow a normal distribution
 
+#is rear axle ratio (drat) correlated with time to drive quarter mile (qsec)
+test <- cor.test(dat$drat, dat$qsec)
+test
 
+#above gives a p value for the correlation test as 0.62, well above 0.05.
+#The actual correlation coefficient is 0.09 but that's not significantly 
+#different from zero.
+#The p value is based on the correlation coefficient and the sample size.
+#So, we CANNOT reject the NULL of no correlation.  
+#We conclude there is no linear relationship between these two variables.
 
+#COMPUTE p-values for several pairs of variables in a dataset at one time.
+#install.packages("Hmisc")
+library(Hmisc)
 
+help(rcorr)
 
+res <- rcorr(as.matrix(dat))
+res
 
+str(res)  #shows the structure of res - is has 
+# r - correlation matrix, 
+# n - number of observations used in analyzing the pair of variables
+# P - p values
 
+#all the p values
+round(res$P, 3)
+
+#combining the correlation coefficients and the test results
+
+#install.packages("correlation")
+library(correlation)
+
+correlation::correlation(mtcars[, 3-11], include_factors = TRUE, method = "auto")
 
 
 #Convert the correlation matrix into a correlation plot/correlogram/corrgram
@@ -169,8 +208,16 @@ corr_cross(dat, # name of dataset
            top = 20 # display top X couples of variables (by correlation coefficient)
 )
 
-#correlation of A SINGLE VARIALBE 9mpg here) against all others
+#correlation of A SINGLE VARIALBE (mpg) against all others
 corr_var(dat, # name of dataset
          mpg, # name of variable to focus on
          top = 5 # display top 5 correlations
 )
+
+help(mtcars)
+
+
+#install.packages("GGally")
+library(GGally)
+
+ggpairs(dat[, c("mpg", "hp", "wt")])
