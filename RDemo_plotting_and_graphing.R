@@ -1,7 +1,7 @@
 # install.packages("vcd")
 # install.packages("car")
 
-# PLOTTING/GRAPHING
+# PLOTTING/GRAPHING 
 
 dat <- iris
 dat$size <- ifelse(dat$Sepal.Length < median(dat$Sepal.Length), "small", "big")
@@ -161,3 +161,5 @@ plot(density(dat$Sepal.Length))
 ggplot(dat) +
   aes(x = Sepal.Length) +
   geom_density()
+
+

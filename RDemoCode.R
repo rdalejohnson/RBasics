@@ -11,12 +11,12 @@ str(x)
 
 ##################### DOWNLOADING PACKAGES ##########################
 
-install.packages("dplyr")
-install.packages("ggplot2")
-install.packages("imputeMissings")
-install.packages("openxlsx")
-install.packages("pastecs")
-install.packages("summarytools")
+# install.packages("dplyr")
+# install.packages("ggplot2")
+# install.packages("imputeMissings")
+# install.packages("openxlsx")
+# install.packages("pastecs")
+# install.packages("summarytools")
 
 library(dplyr)
 
@@ -802,7 +802,7 @@ stat.desc(dat, norm = TRUE)
 
 coeff.of.variation <- sd(dat$Sepal.Length)/mean(dat$Sepal.Length)
 
-coeff.of.variation
+coeff.of.variation 
 
 
 #MODE
@@ -836,7 +836,4 @@ prop.table(table(dat$Species, dat$size), margin = 1)
 prop.table(table(dat$Species, dat$size), margin = 2)
 
 
-################### PACKAGE SUMMARYTOOLS ##############
-library(summarytools)
 
-freq(dat$Species)
