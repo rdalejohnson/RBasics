@@ -1,5 +1,31 @@
 #Correlation and Covariance
 
+############################covariance #################################
+# https://web.stanford.edu/class/archive/cs/cs109/cs109.1178/lectureHandouts/150-covariance.pdf
+# Covariance is a quantitative measure of the extent to which the deviation of one variable from its
+# mean matches the deviation of the other from its mean. 
+# Covariance is interesting because it is a quantitative measurement of the relationship between
+# two variables. 
+
+# Correlation between two random variables, ρ(X, Y ) is the covariance of the two
+# variables normalized by the variance of each variable. This normalization cancels the units out and
+# normalizes the measure so that it is always in the range [0, 1].
+# The correlation is the z score of each x and the z score of each y, multiplied,
+# divided by (n-1).
+# Correlation is how well a line can describe the relationship between x and y.
+#
+
+# https://www.khanacademy.org/math/ap-statistics/random-variables-ap/combining-random-variables/v/variance-of-differences-of-random-variables
+#E(x) is the expected value of x, which is the mean of x.
+#E(y) is the expected value of y, which is the mean of y.
+
+
+cov(Age, LungCap)
+
+
+https://www.youtube.com/watch?v=4EXNedimDMs
+
+
 #Marin Stats: https://www.youtube.com/watch?v=XaNKst8ODEQ
 
 #https://statsandr.com/blog/correlation-coefficient-and-correlation-test-in-r/
@@ -264,8 +290,3 @@ cor.test(Age, LungCap, method="spearman")
 
 cor.test(Age, LungCap, method="spearman", exact = FALSE)
 
-#covariance
-cov(Age, LungCap)
-
-
-https://www.youtube.com/watch?v=4EXNedimDMs
