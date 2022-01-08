@@ -1,4 +1,4 @@
-# Probability Distributions of Discrete Random Variables
+# Probability Distributions of Discrete Random Variables, not from a named distribution
 # Data from Chapter 4, Daniel and Cross Biostats, pages 93-98
 
 numberFoodAssistPrograms <- c(1:8)
@@ -28,14 +28,34 @@ plot(freqTable$numberFoodAssistPrograms,
 
 library("dplyr")
 
-#probabliity that a randomly selected family used 5 or more programs?
+#probability that a randomly selected family used 5 or more programs?
+
 freqTable %>% filter(between(numberFoodAssistPrograms, 1, 4)) %>% 
   summarize(total = 1 - sum(probability))
 
 #probability of randomly selected family using between 3 and 5 programs inclusive
 freqTable %>% filter(between(numberFoodAssistPrograms, 1, 5)) %>% 
-  summarize(total = sum(probability))
-
+  summarize(total = sum(probability)) - 
 freqTable %>% filter(between(numberFoodAssistPrograms, 1, 2)) %>% 
   summarize(total = sum(probability))
 
+
+mean.of.distribution <- sum(freqTable$numberFoodAssistPrograms * freqTable$probability)
+#since the probability in the formula above if just the # subjects/total#subject...
+mean.of.distribution2 <- sum(freqTable$numberFoodAssistPrograms * round(freqTable$numberSubject/sum(freqTable$numberSubject), 4))
+
+variance.of.distribution <- sum((freqTable$numberFoodAssistPrograms^2 * freqTable$probability)) - mean.of.distribution^2
+
+standard.dev.of.distribution <- sqrt(variance.of.distribution)
+
+#now sample randomly from the probability distribution to test your mean and standard deviation:
+
+sample.of <- sample(x = freqTable$numberFoodAssistPrograms, 
+       prob = freqTable$probability,
+       size = 10000, 
+       replace = TRUE)
+
+mean(sample.of)
+sd(sample.of)
+
+########################### BINOMIAL DISTRIBUTION #############################################

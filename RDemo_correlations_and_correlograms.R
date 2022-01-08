@@ -23,7 +23,7 @@
 cov(Age, LungCap)
 
 
-https://www.youtube.com/watch?v=4EXNedimDMs
+#https://www.youtube.com/watch?v=4EXNedimDMs
 
 
 #Marin Stats: https://www.youtube.com/watch?v=XaNKst8ODEQ
