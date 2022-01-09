@@ -573,7 +573,7 @@ names(dat)
 head(dat)
 
 
-############### COMPOSING A DATAFRAME MANUALLY ################
+############### CREATE A DATAFRAME MANUALLY ################
 # if any of these concats have less than 4 values, R cycles through
 # the values for each row BUT you each must be a factor of 4, so
 # the catnames concat has to have 1, 2, or 4 values;  Cannot have 3
