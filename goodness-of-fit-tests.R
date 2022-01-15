@@ -104,10 +104,13 @@ test$residuals
 
 ####################### EXAMPLE: Normal Distribution from Daniel & Cross Text pp. 604ff
 
+#https://www.youtube.com/watch?v=peEsXbdMY_4
+
 # assess short-term clinical, economic, humanistic outcomes of pharmaceutical care services
 # for patients with diabetes in community pharmacies.
 
 # DATA SET:   47 subjects with subject counts by cholesterol range
+# MEAN and SD: from the sample these values are 198.67 and 41.31 respectively
 # QUESTION:   Does the data provide sufficient evidence to indicate that the cholesterol levels sample 
 #             DID NOT come from a normally distributed population with alpha = 0.05?
 # ASSUMPIONS: Simple random sample has been supplied
@@ -115,26 +118,58 @@ test$residuals
 #             distributed
 # HA (ALT):   The sample is NOT normally distributed
 
+library(dplyr)
+
+x1 <- seq(from=100.0, to=299.9, by=25.0)
+x2 <- x1+24.9
+
 dat <- data.frame(
-  "lower" = c(100, 125, 150, 175, 200, 225, 250, 275),
-  "upper" = c(124.9, 149.9, 174.9, 199.9, 224.9, 249.9, 274.9, 299.9),
+  "lower" = x1,
+  "upper" = x2,
   "Observed.Frequency" = c(1, 3, 8, 18, 6, 4, 4, 3)
 )
 
-z.scores = (dat$lower - 198.65)/41.31
+dat.mean <- 198.67
+dat.stdev <- 41.31
+
+dat <- dat %>% 
+  mutate(z.scores = (dat$lower - dat.mean)/dat.stdev)
+
+
+
+new_row1 <- c(NA, 99.9, NA ,  pnorm(dat$z.scores[1], mean=0, sd=1)) 
+
+new_rowX <- c(300.0, NA, )
+
+
+
+
+pnorm(-2.39, mean=0, sd=1)
+
+
+1-pnorm((300 - dat.mean)/dat.stdev, mean=0, sd=1)
+
+
+
+
+z.scores = (dat$lower - dat.mean)/dat.stdev
+
+z.scores
+
+pnorm(z.scores, mean=0, sd=1)
 
 pnorm(1.85, mean=0, sd=1) - pnorm(1.24, mean=0, sd=1)
 
+
+
+
 pnorm(0.03, mean=0, sd=1) - pnorm(-0.57, mean=0, sd=1)
 
+(300 - dat.mean)/dat.stdev
 
+pnorm(z.scores, 0, 1)
 
-
-
-
-snorm(z.scores, 198.65, 41.31)
-
-pnorm(200, 198.65, 41.31, lower.tail = TRUE)
+pnorm(2.452917, 198.65, 41.31, lower.tail = TRUE)
 
 
 
