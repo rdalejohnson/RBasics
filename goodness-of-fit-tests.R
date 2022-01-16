@@ -120,14 +120,25 @@ test$residuals
 
 library(dplyr)
 
-x1 <- seq(from=100.0, to=299.9, by=25.0)
-x2 <- x1+24.9
+
+lowers <- seq(from=75.0, to=324.9, by=25.0)
+lowers
+uppers <- lowers+24.9
+uppers
+
+lowers[lowers < 100 | lowers > 300] <- NA
+lowers
+
+uppers[uppers>300] <- NA
+
 
 dat <- data.frame(
-  "lower" = x1,
-  "upper" = x2,
-  "Observed.Frequency" = c(1, 3, 8, 18, 6, 4, 4, 3)
+  "lower" = lowers,
+  "upper" = uppers,
+  "Observed.Frequency" = c(NA, 1, 3, 8, 18, 6, 4, 4, 3, NA)
 )
+
+dat
 
 dat.mean <- 198.67
 dat.stdev <- 41.31
@@ -135,7 +146,7 @@ dat.stdev <- 41.31
 dat <- dat %>% 
   mutate(z.scores = (dat$lower - dat.mean)/dat.stdev)
 
-
+dat
 
 new_row1 <- c(NA, 99.9, NA ,  pnorm(dat$z.scores[1], mean=0, sd=1)) 
 
