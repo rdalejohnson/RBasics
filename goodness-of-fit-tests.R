@@ -142,22 +142,25 @@ dat
 
 dat.mean <- 198.67
 dat.stdev <- 41.31
+dat.sample.size <- sum(dat$Observed.Frequency, na.rm=TRUE)
+
+
 
 dat <- dat %>% 
   mutate(z.scores = round((dat$lower - dat.mean)/dat.stdev, digits= 2)   )
          
 dat
 
-dat <- dat %>%
-  mutate(expect.relative.freq = 
-           round(
-             pnorm(lead(dat$z.scores), mean=0, sd=1)-pnorm(dat$z.scores, mean=0, sd=1), digits=4)
-  )
+# dat <- dat %>%
+#   mutate(expect.relative.freq = 
+#            round(
+#              pnorm(lead(dat$z.scores), mean=0, sd=1)-pnorm(dat$z.scores, mean=0, sd=1), digits=4)
+#   )
+# 
+# dat
 
-dat
-
 dat <- dat %>%
-  mutate(expect.relative.freq = 
+  mutate(expected.relative.freq = 
            case_when(
              is.na(dat$z.scores) ~ round(pnorm(lead(dat$z.scores), mean=0, sd=1), digits=4),
              is.na(lead(dat$z.scores)) ~  round(1-pnorm(dat$z.scores, mean=0, sd=1), digits=4),
@@ -166,55 +169,32 @@ dat <- dat %>%
 
 dat
 
+dat <- dat %>%
+  mutate(expected.frequency = round(dat$expected.relative.freq * dat.sample.size, 1)
+         )
+
+dat
 
 
 
-
-
-round((100 - dat.mean)/dat.stdev, digits= 2)
-
-
-mutate(DT, D = lag(B) + C)
-
-
-new_row1 <- c(NA, 99.9, NA ,  pnorm(dat$z.scores[1], mean=0, sd=1)) 
-
-new_rowX <- c(300.0, NA, )
-
-pnorm(-2.39, mean=0, sd=1)
-
-1-pnorm((300 - dat.mean)/dat.stdev, mean=0, sd=1)
-
-pnorm(-2.39, mean=0, sd=1)
-
-
-z.scores = (dat$lower - dat.mean)/dat.stdev
-
-z.scores
-
-pnorm(z.scores, mean=0, sd=1)
-
-pnorm(1.85, mean=0, sd=1) - pnorm(1.24, mean=0, sd=1)
-
-
-round((0 - dat.mean)/dat.stdev, digits= 2)
-
-pnorm(-4.81, mean=0, sd=1) 
-
-
-- pnorm(-0.57, mean=0, sd=1)
-
-(300 - dat.mean)/dat.stdev
-
-pnorm(z.scores, 0, 1)
-
-pnorm(2.452917, 198.65, 41.31, lower.tail = TRUE)
-
-
-
-
-pnorm(99.9, 198.65, 41.31)
-, lower.tail = TRUE)
-pnorm(124.9, 198.65, 41.31, lower.tail = TRUE)
-pnorm(300, 198.65, 41.31, lower.tail=FALSE)
-
+# round((100 - dat.mean)/dat.stdev, digits= 2)
+# mutate(DT, D = lag(B) + C)
+# new_row1 <- c(NA, 99.9, NA ,  pnorm(dat$z.scores[1], mean=0, sd=1)) 
+# new_rowX <- c(300.0, NA, )
+# pnorm(-2.39, mean=0, sd=1)
+# 1-pnorm((300 - dat.mean)/dat.stdev, mean=0, sd=1)
+# pnorm(-2.39, mean=0, sd=1)
+# z.scores = (dat$lower - dat.mean)/dat.stdev
+# z.scores
+# pnorm(z.scores, mean=0, sd=1)
+# pnorm(1.85, mean=0, sd=1) - pnorm(1.24, mean=0, sd=1)
+# round((0 - dat.mean)/dat.stdev, digits= 2)
+# pnorm(-4.81, mean=0, sd=1) 
+# 1-pnorm(-0.57, mean=0, sd=1)
+# (300 - dat.mean)/dat.stdev
+# pnorm(z.scores, 0, 1)
+# pnorm(2.452917, 198.65, 41.31, lower.tail = TRUE)
+# pnorm(99.9, 198.65, 41.31)
+# , lower.tail = TRUE)
+# pnorm(124.9, 198.65, 41.31, lower.tail = TRUE)
+# pnorm(300, 198.65, 41.31, lower.tail=FALSE)
