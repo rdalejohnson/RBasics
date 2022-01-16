@@ -118,6 +118,14 @@ test$residuals
 #             distributed
 # HA (ALT):   The sample is NOT normally distributed
 
+# we wonder if the discrepancies between expected and observed frequencies are small enough 
+# to have occurred by chance alone if the NULL hypothesis that the cholesterol
+# levels are normally distributed is TRUE.
+
+# if the probability of calculating a chi-square value as large as x is not < 0.05
+# when the NULL hypothesis is true, the event is not sufficiently rare to reject the NULL
+# that the data comes from a normal distribution
+
 library(dplyr)
 
 
@@ -135,7 +143,7 @@ uppers[uppers>300] <- NA
 dat <- data.frame(
   "lower" = lowers,
   "upper" = uppers,
-  "Observed.Frequency" = c(NA, 1, 3, 8, 18, 6, 4, 4, 3, NA)
+  "Observed.Frequency" = c(0, 1, 3, 8, 18, 6, 4, 4, 3, 0)
 )
 
 dat
@@ -145,19 +153,15 @@ dat.stdev <- 41.31
 dat.sample.size <- sum(dat$Observed.Frequency, na.rm=TRUE)
 
 
+#since we're checking for normal distribution, calculate the z scores for
+#each category, then take the probabilities for those z scores and get the area
+#under the curve for each category.
 
 dat <- dat %>% 
   mutate(z.scores = round((dat$lower - dat.mean)/dat.stdev, digits= 2)   )
          
 dat
 
-# dat <- dat %>%
-#   mutate(expect.relative.freq = 
-#            round(
-#              pnorm(lead(dat$z.scores), mean=0, sd=1)-pnorm(dat$z.scores, mean=0, sd=1), digits=4)
-#   )
-# 
-# dat
 
 dat <- dat %>%
   mutate(expected.relative.freq = 
@@ -175,26 +179,29 @@ dat <- dat %>%
 
 dat
 
+dat <- dat %>%
+  mutate (calculation = (dat$Observed.Frequency - dat$expected.frequency)^2/dat$expected.frequency)
+
+dat
+
+sum(dat$calculation)
+
+########################quick and dirty version of the same problem ###################################
 
 
-# round((100 - dat.mean)/dat.stdev, digits= 2)
-# mutate(DT, D = lag(B) + C)
-# new_row1 <- c(NA, 99.9, NA ,  pnorm(dat$z.scores[1], mean=0, sd=1)) 
-# new_rowX <- c(300.0, NA, )
-# pnorm(-2.39, mean=0, sd=1)
-# 1-pnorm((300 - dat.mean)/dat.stdev, mean=0, sd=1)
-# pnorm(-2.39, mean=0, sd=1)
-# z.scores = (dat$lower - dat.mean)/dat.stdev
-# z.scores
-# pnorm(z.scores, mean=0, sd=1)
-# pnorm(1.85, mean=0, sd=1) - pnorm(1.24, mean=0, sd=1)
-# round((0 - dat.mean)/dat.stdev, digits= 2)
-# pnorm(-4.81, mean=0, sd=1) 
-# 1-pnorm(-0.57, mean=0, sd=1)
-# (300 - dat.mean)/dat.stdev
-# pnorm(z.scores, 0, 1)
-# pnorm(2.452917, 198.65, 41.31, lower.tail = TRUE)
-# pnorm(99.9, 198.65, 41.31)
-# , lower.tail = TRUE)
-# pnorm(124.9, 198.65, 41.31, lower.tail = TRUE)
-# pnorm(300, 198.65, 41.31, lower.tail=FALSE)
+#totaled to 0.9998, so had to add .0002 to get  chi-square to actually run.
+
+chisq.test(c(1, 3, 8, 18, 6, 4, 4, 3), p = c(0.0376, 0.0815, .1653, .2276, .2269, .1536, .0753, .0322))
+
+#DEGREES OF FREEDOM
+#10 categories but we had to compute estimates based on observed 
+#and We had to compute mean and standard deviation
+#so degrees of freedom = 10-3 = 7
+#If the population mean and variance had been specified, we would not have had to estimate
+#those two values and the degrees of freedom would have been 9.
+pchisq(q=sum(dat$calculation), df=7, lower.tail=FALSE)
+
+# the p value for that chisq calc is .939, so we cannot reject the NULL hypothesis
+# we cannot reject the hypothesis that the sample came from a normally distributed population
+
+
