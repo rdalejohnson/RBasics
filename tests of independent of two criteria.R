@@ -206,3 +206,75 @@ colnames(pairz6) = c(colnames(Matriz)[1], colnames(Matriz)[2])
 
 pairz6
 chisq.test(pairz6)
+
+
+
+############ BAR CHARTS ####################
+
+
+Input = ("
+         Supplement  No.cancer Cancer
+         'Selenium'    8177       575
+         'Vitamin E'   8117       620
+         'Selenium+E'  8147       555
+         'Placebo'     8167       529
+         ")
+
+Prostate = read.table(textConnection(Input), header=TRUE)
+
+library(dplyr)
+
+Prostate
+
+# add row totals
+Prostate =
+  mutate(Prostate,
+         Sum = No.cancer + Cancer)
+
+Prostate
+
+# add proportions, lower and upper confidence intervals for a proportion
+
+# CI for a proportion uses the binomial distribution/binom test
+
+#The APPLY family of functions manipulates slices of data from mamtrices, arrays, lists,
+#and dataframes
+#margin = 1 means apply the function over rows
+
+Prostate =
+  mutate(Prostate,
+         Prop = Cancer / Sum,
+         low.ci = apply(Prostate[c("Cancer", "Sum")], 1,
+                        function(y) binom.test(y['Cancer'], y['Sum'])$ conf.int[1]),
+         high.ci = apply(Prostate[c("Cancer", "Sum")], 1,
+                         function(y) binom.test(y['Cancer'], y['Sum'])$ conf.int[2])
+  )
+
+Prostate
+
+
+
+### Plot (Bar chart plot)
+
+library(ggplot2)
+
+ggplot(Prostate,
+       aes(x=Supplement, y=Prop)) +
+  geom_bar(stat="identity", fill="gray40",
+           colour="black", size=0.5,
+           width=0.7) +
+  geom_errorbar(aes(ymax=high.ci, ymin=low.ci),
+                width=0.2, size=0.5, color="black") +
+  xlab("Supplement") +
+  ylab("Prostate cancer proportion") +
+  scale_x_discrete(labels=c("Selenium", "Vitamin E",
+                            "Selenium+E","Placebo")) +
+  ## ggtitle("Main title") +
+  theme(axis.title=element_text(size=14, color="black",
+                                face="bold", vjust=3)) +
+  theme(axis.text = element_text(size=12, color = "gray25",
+                                 face="bold")) +
+  theme(axis.title.y = element_text(vjust= 1.8)) +
+  theme(axis.title.x = element_text(vjust= -0.5))
+
+
