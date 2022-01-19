@@ -278,3 +278,107 @@ ggplot(Prostate,
   theme(axis.title.x = element_text(vjust= -0.5))
 
 
+
+#### CHI-SQUARE test for homogeneity of groups/populations ##############
+
+#Comparing for adverse effects of drugs assigned for seasonal allergy relief. 
+#In this particular experiment, there were four different populations, 
+#one used Claritin-D, a second used Loratadine, a third used Pseudoephedrine, 
+#and a fourth was assigned a Placebo. 
+#Counts for the number of patients in the four populations 
+#that experienced insomnia.  
+#https://mse.redwoods.edu/darnold/math15/spring2013/R/Activities/ChiSquareTestOfHomogeneity.html
+#The NULL hypothesis: the distribution of insomnia experienced is the same for each treatment/drug group
+#The ALTERNATIVE hypothesis: the distribution for insomnia across the four groups is NOT the same. 
+
+Observed=matrix(c(164,859,22,521,104,444,28,894),nrow=2)
+Observed
+
+#add row and column names
+colnames(Observed)=c("Claritin-D","Loratadine","Psedoephedrine","Placebo")
+rownames(Observed)=c("Yes","No")
+Observed
+
+
+#################CHI-SQUARE HOMOGENEITY BY HAND############################
+
+#we want to divide each entry in a particular column by the sum of the 
+#entries in that column, which gives us the distribution of “Yes” and “No” 
+#for that particular column.
+
+prop.table(Observed,2)
+
+#This table shows that 16% of Claritin-D takers experienced insomnia
+#4% taking loratadine takers experienced insomnia, etc.
+
+barplot(prop.table(Observed,2),beside=TRUE,legend.text=TRUE,
+        ylim=c(0,1),ylab="Proportions")
+
+# the yes and no totals look very different for all
+# four medications
+
+
+#Add the margins (rows and columns totals)
+
+x=addmargins(Observed)
+x
+
+# percentage experiencing insomnia is
+p.yes = 318/3036
+p.yes
+#or 10.47%
+
+
+p.no = 2718/3036
+p.no
+#or 89.53%
+
+#If all populations are equal for these two
+#percentages, then compute the EXPECTED values using
+#these same numbers for each drug.
+
+#expected number for Claritin.D etc.
+Claritin.D = 1023*c(p.yes, p.no)
+Claritin.D
+Loratadine = 543*c(p.yes, p.no)
+Loratadine
+Pseudoephedrine = 548*c(p.yes, p.no)
+Pseudoephedrine
+Placebo = 922*c(p.yes, p.no)
+Placebo
+
+#make a table out of the expected numbers
+Expected=cbind(Claritin.D,Loratadine,Pseudoephedrine,Placebo)
+rownames(Expected)=c("Yes","No")
+Expected
+
+
+#now use the chi square formula and sum up observed - expected squared 
+#divided by expected
+
+chi.sq = sum((Observed-Expected)^2/Expected)
+chi.sq
+
+#"hand-check" the chi-square statistic against the chi-square
+#distribution for the given degrees of freedom
+R=2
+C=4
+df=(R-1)*(C-1)
+1-pchisq(chi.sq,df)
+
+
+# SAME EXAMPLE USING BUILT-in FUNCTION
+
+xtest <- chisq.test(Observed)
+
+summary(xtest)
+attributes(xtest)
+
+
+########################## FISHER's EXACT TEST ###########################
+#computes an odds ratio, with a confidence interval if desired
+# only returns confidence interval for a 2-by-2
+fish <- fisher.test(observed, conf.int=TRUE, conf.level=0.95)
+attributes(fish)
+
+?fisher.test
