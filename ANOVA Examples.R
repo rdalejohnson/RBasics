@@ -31,18 +31,19 @@ library(ggplot2)
 library(hrbrthemes)
 library(viridis)
 library(forcats)
-library(dplyr)
+
 library(car)
 library(lattice)
 library(report)
 library(multcomp)
+library(dplyr)
 
 penguins
 
 #keep only these columns in your copy of the dataset
 
 dat <- penguins %>%
-  select(species, flipper_length_mm)
+  dplyr::select(species, flipper_length_mm)
 
 #Summarize entire dataset
 summary(dat)
@@ -208,13 +209,20 @@ report(residuals_anova)
 #one group is different.  Answering which groups are different
 #requires  a post-ho test or multiple pairwise comparisons
 
+
+######################### WELCH ANOVA ######################################
+#When variances are not equal, you just change the var.equal parameter
+#to FALSE
+
+oneway.test(flipper_length_mm ~ species, data=dat, var.equal=FALSE)
+
 ############################## POSTHOC TESTS ##################################
 ############################## POSTHOC TESTS ##################################
 ############################## POSTHOC TESTS ##################################
 ############################## POSTHOC TESTS ##################################
 
 
-#Tukey HSD:
+################################Tukey HSD:#########################
 #When you have no particular referernce group - you want to compare all groups 
 #to find the difference
 #look at table labeled Linear Hypotheses; first and last columns, which show the
@@ -240,3 +248,101 @@ plot(post_test_tukey_hsd)
 TukeyHSD(residuals_anova)
 
 plot(TukeyHSD(residuals_anova))
+
+###############################Dunnett###################################
+#chooses a reference group and other groups are compared to the reference
+#group, not all pairs, increases statistical power - your alpha is not getting
+#as small as it would with Tukey HSD.
+
+#Same approach as the first Tukey approach above but uses Dunnett
+#will only compare Adelie to the other two species.
+#in the output, both Chinstrap and Gentoo are significant different
+#from Adelie but WE CAN SAY NOTHING about the Chinstrap-Gentoo differences
+
+#REFERENCE GROUP: by default, as below, the reference group is the first
+#group alphabetically, so will be Adelie
+
+post_test_dunnett <- glht(residuals_anova, linfct=mcp(species="Dunnett"))
+summary(post_test_dunnett)
+
+#plot shows 95% CIs; neither crosses zero.
+plot(mar=c(3,8,3,3))
+plot(post_test_dunnett)
+
+
+#To change the reference level to Gentoo species:
+dat$species <- relevel(dat$species, ref="Gentoo")
+#confirm the order of species; ref level will be first
+levels(dat$species)
+
+#!!!!!! IMPORTANT: After changing the reference level, you have to re-run the ANOVA
+#and the POSTHOC
+
+residuals_GENTOO_anova <- aov(flipper_length_mm ~ species,
+                data = dat
+)
+
+post_test_dunnett_GENTOO <- glht(residuals_GENTOO_anova, linfct=mcp(species="Dunnett"))
+summary(post_test_dunnett_GENTOO)
+
+#plot shows 95% CIs; neither crosses zero.
+plot(mar=c(3,8,3,3))
+plot(post_test_dunnett_GENTOO)
+
+
+# OTHER p-value adjustments for multiple tests:
+
+pairwise.t.test(dat$flipper_length_mm, dat$species, p.adjust.method="holm")
+
+
+
+################# GRAPHING ANOVA and POSTHOC RESULTS TOGETHER #################################
+
+# Edit from here
+x <- which(names(dat) == "species") # name of grouping variable
+y <- which(
+  names(dat) == "flipper_length_mm" # names of variables to test
+)
+method1 <- "anova" # one of "anova" or "kruskal.test"
+method2 <- "t.test" # one of "wilcox.test" or "t.test"
+my_comparisons <- list(c("Chinstrap", "Adelie"), c("Gentoo", "Adelie"), c("Gentoo", "Chinstrap")) # comparisons for post-hoc tests
+# Edit until here
+
+
+# Edit at your own risk
+library(ggpubr)
+for (i in y) {
+  for (j in x) {
+    p <- ggboxplot(dat,
+                   x = colnames(dat[j]), y = colnames(dat[i]),
+                   color = colnames(dat[j]),
+                   legend = "none",
+                   palette = "npg",
+                   add = "jitter"
+    )
+    print(
+      p + stat_compare_means(aes(label = paste0(..method.., ", p-value = ", ..p.format..)),
+                             method = method1, label.y = max(dat[, i], na.rm = TRUE)
+      )
+      + stat_compare_means(comparisons = my_comparisons, method = method2, label = "p.format") # remove if p-value of ANOVA or Kruskal-Wallis test >= alpha
+    )
+  }
+}
+
+#ANOTHER METHOD
+
+
+library(ggstatsplot)
+
+ggbetweenstats(
+  data = dat,
+  x = species,
+  y = flipper_length_mm,
+  type = "parametric", # ANOVA or Kruskal-Wallis
+  var.equal = TRUE, # ANOVA or Welch ANOVA
+  plot.type = "box",
+  pairwise.comparisons = TRUE,
+  pairwise.display = "significant",
+  centrality.plotting = FALSE,
+  bf.message = FALSE
+)
